@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/color_button"
+        android:icon="@android:drawable/divider_horizontal_bright"
+        android:title="COLOUR"
+        app:showAsAction="always"></item>
+    <item
+        android:id="@+id/save_button"
+        android:title="SAVE"
+        app:showAsAction="always"></item>
+    <item android:title="DISCARD"
+        android:id="@+id/discard_button"
+        app:showAsAction="always"></item>
+</menu>

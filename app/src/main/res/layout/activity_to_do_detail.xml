@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/base_layout"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@color/defaultColor"
+        android:orientation="vertical"
+        android:id="@+id/header_layout">
+
+        <EditText
+            android:id="@+id/detail_title"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Title"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <TextView
+                android:id="@+id/detail_date"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="28"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="Date"
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/date_selector"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@android:color/holo_green_light"
+                android:elevation="9dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@android:drawable/ic_menu_today" />
+
+            <TextView
+                android:id="@+id/detail_time"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="Time"
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/time_selector"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginRight="5dp"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:elevation="9dp"
+                android:background="@color/colorAccent"
+                app:srcCompat="@android:drawable/ic_lock_idle_alarm" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/Detail_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:ems="10"
+        android:hint="Details"
+        android:gravity="start"
+        android:padding="10dp"
+        android:inputType="textMultiLine"
+        android:textSize="23sp" />
+
+    </LinearLayout>
