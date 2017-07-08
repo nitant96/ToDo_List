@@ -152,23 +152,22 @@ public class ListActivity extends AppCompatActivity {
                         String[] s = {listOfItemSelected.get(index)};
                         database.delete(FirstOpenHelper.TODO_TABLE_NAME, FirstOpenHelper.TODO_ID + "=?", s);
                     }
-                    dialog.dismiss();
+                    listOfItemSelected.clear();
+                    updateList();
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+                    listOfItemSelected.clear();
                 }
             });
             Dialog dialog=builder.create();
             dialog.show();
             viewOfItemSelected.clear();
-            listOfItemSelected.clear();
             itemSelected=false;
             add_item.setVisible(true);
             del_item.setVisible(false);
-            updateList();
         }
         return true;
     }

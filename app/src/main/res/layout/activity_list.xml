@@ -46,8 +46,18 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:id="@+id/item_list" />
+
+    <TextView
+        android:id="@+id/copyWrite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/white"
+        android:text="Nitant Sood" />
 
 
 </LinearLayout>

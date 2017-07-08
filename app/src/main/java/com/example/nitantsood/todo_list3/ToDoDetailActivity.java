@@ -43,6 +43,7 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
 
     public int year=0,month=0,dom=0;
     public int hours=0,mins=0;
+    static boolean called_from=false;
     Timestamp timeStamp;
     int decider,color=4;
     String id;
@@ -51,12 +52,14 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
     EditText detail;
     MenuItem col_button;
     ImageButton calendar,clock;
+    Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_do_detail);
-        Intent i=getIntent();
-        decider=i.getIntExtra("requestCode",ListActivity.NEW_ITEM);
+        intent=getIntent();
+        decider=intent.getIntExtra("requestCode",ListActivity.NEW_ITEM);
         title=(EditText) findViewById(R.id.detail_title);
         date=(TextView) findViewById(R.id.detail_date);
         time=(TextView) findViewById(R.id.detail_time);
@@ -64,7 +67,7 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
         clock=(ImageButton) findViewById(R.id.time_selector);
         calendar=(ImageButton) findViewById(R.id.date_selector);
         if(decider==ListActivity.MODIFY_ITEM){
-           id=i.getStringExtra(FirstOpenHelper.TODO_ID);
+           id=intent.getStringExtra(FirstOpenHelper.TODO_ID);
             FirstOpenHelper firstOpenHelper=new FirstOpenHelper(this);
             SQLiteDatabase database=firstOpenHelper.getWritableDatabase();
             String[] S={""+id};
@@ -309,9 +312,16 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
             if(!time.getText().toString().equals("")){
                 setAlarm(id);
             }
-            Intent i = new Intent();
-            setResult(RESULT_OK, i);
-            finish();
+            if(called_from==false) {
+                Intent i = new Intent();
+                setResult(RESULT_OK, i);
+                finish();
+            }
+            if(called_from==true){
+                called_from=false;
+                Intent intent=new Intent(this,ListActivity.class);
+                startActivity(intent);
+            }
         }
     }
     void setTimeStamp(int year1,int month1,int dom1,int hours1,int mins1){
@@ -321,6 +331,8 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
         cal.set(Calendar.DAY_OF_MONTH,dom1);
         cal.set(Calendar.HOUR_OF_DAY,hours1);
         cal.set(Calendar.MINUTE,mins1);
+        cal.set(Calendar.SECOND,0);
+        cal.set(Calendar.MILLISECOND,0);
         if(hours==0 && mins==0){
             if(year==0 && month==0 && dom==0){
                 timeStamp=new Timestamp(0);

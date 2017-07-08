@@ -20,12 +20,13 @@ public class FirstOpenHelper extends SQLiteOpenHelper {
     public final static String TODO_DATE="Date";
     public final static String TODO_TIMESTAMP="TimeStamp";
     public final static String TODO_TIME="Time";
+    public final static String TODO_ARCHIVE="Archive";
 
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         String tableCreate="Create table "+TODO_TABLE_NAME+"( "+TODO_ID+" integer primary key autoincrement, "+TODO_TITLE+" text, "+
-                TODO_DETAIL+" text, "+TODO_COLOR+" integer, "+TODO_DATE+" text, "+TODO_TIME+" text, "+
+                TODO_DETAIL+" text, "+TODO_COLOR+" integer, "+TODO_DATE+" text, "+TODO_TIME+" text, "+TODO_ARCHIVE+" integer, "+
                 TODO_TIMESTAMP+" text);";
         db.execSQL(tableCreate);
 

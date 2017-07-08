@@ -12,6 +12,7 @@ public class OneEntry {
     String timestamp;
     String id;
     String time;
+    int archive=0;
 
 
     public OneEntry(String title,String detail,String date,String id,int color,String time) {
