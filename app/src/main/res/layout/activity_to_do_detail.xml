@@ -49,10 +49,11 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@android:color/holo_green_light"
+                android:background="@android:color/holo_green_dark"
                 android:elevation="9dp"
                 android:scaleType="fitXY"
-                app:srcCompat="@android:drawable/ic_menu_today" />
+                app:srcCompat="@android:drawable/ic_menu_today"/>
+                <!--app:srcCompat="@drawable/calender_but" />-->
 
             <TextView
                 android:id="@+id/detail_time"
@@ -75,8 +76,8 @@
                 android:layout_gravity="center_vertical"
                 android:scaleType="fitXY"
                 android:elevation="9dp"
-                android:background="@color/colorAccent"
-                app:srcCompat="@android:drawable/ic_lock_idle_alarm" />
+                android:background="@android:color/holo_red_dark"
+                app:srcCompat="@drawable/clock_but" />
         </LinearLayout>
     </LinearLayout>
 

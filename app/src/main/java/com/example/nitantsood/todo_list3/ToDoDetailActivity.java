@@ -8,6 +8,7 @@ import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -47,11 +49,13 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
     Timestamp timeStamp;
     int decider,color=4;
     String id;
+    static int PRIORITY_NUMBER=0;
     EditText title;
     TextView date,time;
     EditText detail;
-    MenuItem col_button;
+    MenuItem col_button,archive_button;
     ImageButton calendar,clock;
+    SharedPreferences sharedPreferences;
     Intent intent;
 
     @Override
@@ -60,6 +64,13 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
         setContentView(R.layout.activity_to_do_detail);
         intent=getIntent();
         decider=intent.getIntExtra("requestCode",ListActivity.NEW_ITEM);
+        sharedPreferences=getSharedPreferences("ToDo",MODE_PRIVATE);
+        if(sharedPreferences.getBoolean("first_time",true)){
+            sharedPreferences.edit().putInt("PRIORITY_NUMBER",0);
+            sharedPreferences.edit().putBoolean("first_time",false).commit();
+        }else{
+            PRIORITY_NUMBER=sharedPreferences.getInt("PRIORITY_NUMBER",0);
+        }
         title=(EditText) findViewById(R.id.detail_title);
         date=(TextView) findViewById(R.id.detail_date);
         time=(TextView) findViewById(R.id.detail_time);
@@ -111,9 +122,20 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
             date.setText(date1);
             time.setText(time1);
             setTimeStamp(year,month,dom,hours,mins);
+//            Toast.makeText(this,"Clicked priority "+cursor.getInt(cursor.getColumnIndex(FirstOpenHelper.TODO_PRIORITY)),Toast.LENGTH_SHORT).show();
         }
         setColor(color);
-
+        if(intent.getBooleanExtra("Archive",false)) {
+            FirstOpenHelper firstOpenHelper = new FirstOpenHelper(this);
+            SQLiteDatabase database = firstOpenHelper.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put(FirstOpenHelper.TODO_ARCHIVE, 1);
+            database.update(FirstOpenHelper.TODO_TABLE_NAME, cv, FirstOpenHelper.TODO_ID + "=" + id, null);
+            if (called_from == true) {
+                called_from = false;
+            }
+            finish();
+        }
         clock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,7 +209,13 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.detail_menu,menu);
         col_button=menu.getItem(0);
-        col_button.setIcon(R.drawable.colors);
+        archive_button=menu.getItem(2);
+        if(decider==ListActivity.MODIFY_ITEM) {
+            archive_button.setVisible(true);
+        }else if(decider==ListActivity.NEW_ITEM){
+            archive_button.setVisible(false);
+        }
+        col_button.setIcon(R.drawable.color_but_1);
         return true;
     }
     @Override
@@ -217,10 +245,22 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
                 transfer(cv,database);
             }
         }
-        else if(item_id==R.id.discard_button){
-            Intent i=new Intent();
-            setResult(RESULT_CANCELED,i);
-            finish();
+        else if(item_id==R.id.archive_button){
+            FirstOpenHelper firstOpenHelper=new FirstOpenHelper(this);
+            SQLiteDatabase database=firstOpenHelper.getWritableDatabase();
+            ContentValues cv=new ContentValues();
+            cv.put(FirstOpenHelper.TODO_ARCHIVE,1);
+            database.update(FirstOpenHelper.TODO_TABLE_NAME,cv,FirstOpenHelper.TODO_ID+"="+id,null);
+            if(called_from==false) {
+                Intent i = new Intent();
+                setResult(RESULT_OK, i);
+                finish();
+            }
+            if(called_from==true){
+                called_from=false;
+                Intent intent=new Intent(this,ListActivity.class);
+                startActivity(intent);
+            }
         }
         else if(item_id==R.id.color_button){
             final Dialog dialog=new Dialog(this);
@@ -294,15 +334,23 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
             cv.put(FirstOpenHelper.TODO_TIMESTAMP, timeStamp.toString());
         }
         cv.put(FirstOpenHelper.TODO_COLOR,color);
+        cv.put(FirstOpenHelper.TODO_ARCHIVE,0);
         if (decider == ListActivity.NEW_ITEM) {
+            cv.put(FirstOpenHelper.TODO_PRIORITY,PRIORITY_NUMBER++);
+            sharedPreferences.edit().putInt("PRIORITY_NUMBER",PRIORITY_NUMBER).commit();
             database.insert(FirstOpenHelper.TODO_TABLE_NAME, null, cv);
+            Cursor cursor;
+            String idq;
             if(!time.getText().toString().equals("")){
                 String[]string1={timeStamp.toString()};
-                Cursor cursor=database.query(FirstOpenHelper.TODO_TABLE_NAME,null,FirstOpenHelper.TODO_TIMESTAMP+"=?",string1,null,null,null);
+                cursor=database.query(FirstOpenHelper.TODO_TABLE_NAME,null,FirstOpenHelper.TODO_TIMESTAMP+"=?",string1,null,null,null);
                 cursor.moveToNext();
-                String idq=cursor.getString(cursor.getColumnIndex(FirstOpenHelper.TODO_ID));
+                idq=cursor.getString(cursor.getColumnIndex(FirstOpenHelper.TODO_ID));
                 setAlarm(idq);
             }
+//            cv.put(FirstOpenHelper.TODO_PRIORITY,Integer.parseInt(idq));
+//            String[] SA={idq};
+//            database.update(FirstOpenHelper.TODO_TABLE_NAME,cv,FirstOpenHelper.TODO_ID+"=?",SA);
             Intent i = new Intent();
             setResult(RESULT_OK, i);
             finish();
@@ -358,7 +406,9 @@ public class ToDoDetailActivity extends AppCompatActivity implements  DatePicker
     }
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        Intent i=new Intent();
+        setResult(RESULT_CANCELED,i);
+        finish();
     }
 
     @Override

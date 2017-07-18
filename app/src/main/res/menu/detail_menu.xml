@@ -10,7 +10,7 @@
         android:id="@+id/save_button"
         android:title="SAVE"
         app:showAsAction="always"></item>
-    <item android:title="DISCARD"
-        android:id="@+id/discard_button"
+    <item android:title="ARCHIVE"
+        android:id="@+id/archive_button"
         app:showAsAction="always"></item>
 </menu>

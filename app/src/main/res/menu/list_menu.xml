@@ -3,10 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/add_item"
-        android:enabled="true"
-        android:title="NEW REMINDER"
-        android:visible="true"
+        android:id="@+id/List_color_button"
+        android:icon="@android:drawable/divider_horizontal_bright"
+        android:title="COLOUR"
         app:showAsAction="always"></item>
     <item
         android:id="@+id/delete_item"
@@ -16,4 +15,23 @@
         android:visible="false"
         app:showAsAction="always"
         tools:icon="@android:drawable/ic_menu_delete" />
+    <item
+        android:id="@+id/search_item"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Search"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/show_archive"
+        android:title="Show Archive"
+        android:enabled="true" />
+    <item
+        android:id="@+id/search_by_priority"
+        android:title="Show Priority List"></item>
+    <item
+        android:id="@+id/search_by_title"
+        android:title="Search By Name"></item>
+
+
 </menu>

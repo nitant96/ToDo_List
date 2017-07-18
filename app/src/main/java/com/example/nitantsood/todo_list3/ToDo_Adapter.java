@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ import static android.graphics.Color.red;
  * Created by NITANT SOOD on 03-07-2017.
  */
 
-public class ToDo_Adapter extends ArrayAdapter<OneEntry> {
+public class ToDo_Adapter extends RecyclerView.Adapter<ToDo_Adapter.OneEntryViewHolder> {
     public final static String red_main="#e91e63";
     public final static String red_base="#ff6090";
     public final static String green_main="#7ecb20";
@@ -30,75 +31,135 @@ public class ToDo_Adapter extends ArrayAdapter<OneEntry> {
     public final static String blue_base="#82b1ff";
     public final static String yellow_main="#FFFFE628";
     public final static String yellow_base="#FFFFF07C";
-    Context context;
-    ArrayList<OneEntry> arrayList;
 
-    public ToDo_Adapter(@NonNull Context context, ArrayList<OneEntry> arrayList) {
-        super(context,0,arrayList);
-        this.context=context;
-        this.arrayList=arrayList;
+    private Context mContext;
+    private ArrayList<OneEntry> mReminder;
+    private ReminderClickListener mListener;
+
+    public interface ReminderClickListener {
+        void onItemClick(View view,int position);
+        boolean onItemLongClick(View view,int position);
     }
-    static class OneEntryViewHolder{
+
+
+    public ToDo_Adapter(Context context, ArrayList<OneEntry> reminder,ReminderClickListener listener){
+        mContext = context;
+        mReminder=reminder;
+        mListener = listener;
+    }
+
+    @Override
+    public OneEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(mContext).inflate(R.layout.list_item,parent,false);
+        return  new OneEntryViewHolder(itemView,mListener);
+    }
+
+    @Override
+    public void onBindViewHolder(OneEntryViewHolder holder, int position) {
+        OneEntry entry=mReminder.get(position);
+        holder.title.setText(entry.title);
+        holder.detail.setText(entry.detail);
+        holder.date.setText(entry.date);
+        setSelectioSymbol(mReminder.get(position).id,holder.selection_symbol);
+        if(!mReminder.get(position).time.equals("")){
+            holder.clock.setImageResource(android.R.drawable.ic_lock_idle_alarm);
+        }
+        else{
+            holder.clock.setImageResource(0);
+        }
+        int main_col=getMainColor(position);
+        int base_col=getBaseColor(position);
+        holder.itemView.setBackgroundColor(base_col);
+        holder.selection_symbol.setBackgroundColor(main_col);
+    }
+
+    @Override
+    public int getItemCount() {
+        return mReminder.size();
+    }
+
+    public  static class OneEntryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{
 
         TextView title;
         TextView detail ;
         TextView date ;
         ImageView clock;
+        ImageView selection_symbol;
+        ReminderClickListener mReminderClickListener;
 
-        public OneEntryViewHolder(TextView title, TextView detail, TextView date,ImageView clock) {
-            this.title = title;
-            this.detail = detail;
-            this.date = date;
-            this.clock=clock;
+        public OneEntryViewHolder(View itemView,ReminderClickListener listener) {
+            super(itemView);
+            itemView.findViewById(R.id.selection_symbol).setOnClickListener(this);
+            itemView.findViewById(R.id.list_item_viewer).setOnClickListener(this);
+            itemView.findViewById(R.id.list_item_viewer).setOnLongClickListener(this);
+            mReminderClickListener=listener;
+            title=(TextView) itemView.findViewById(R.id.item_title);
+            detail=(TextView) itemView.findViewById(R.id.item_detail);
+            date=(TextView) itemView.findViewById(R.id.item_date);
+            selection_symbol=(ImageView) itemView.findViewById(R.id.selection_symbol);
+            clock=(ImageView) itemView.findViewById(R.id.alarm_notifier);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position=getAdapterPosition();
+            mReminderClickListener.onItemClick(v,position);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            int position=getAdapterPosition();
+            return mReminderClickListener.onItemLongClick(v,position);
+
         }
     }
-    public int getColor(int position){
-        int col;
-        if(arrayList.get(position).color==1)
-        {
-            col=Color.parseColor(red_main);
+    public void setSelectioSymbol(String id,ImageView im){
+        if(ListActivity.listOfItemSelected.contains(id)){
+            im.setImageResource(android.R.drawable.checkbox_on_background);
         }
-        else if(arrayList.get(position).color==2)
-        {
-            col=Color.parseColor(green_main);
+        else{
+            im.setImageResource(android.R.drawable.btn_radio);
         }
-        else if(arrayList.get(position).color==3)
+    }
+    public int getMainColor(int position){
+        int main_col;
+        if(mReminder.get(position).color==1)
         {
-            col=Color.parseColor(blue_main);
+            main_col=Color.parseColor(red_main);
+        }
+        else if(mReminder.get(position).color==2)
+        {
+            main_col=Color.parseColor(green_main);
+        }
+        else if(mReminder.get(position).color==3)
+        {
+            main_col=Color.parseColor(blue_main);
         }
         else
         {
-            col=Color.parseColor(yellow_main);
+            main_col=Color.parseColor(yellow_main);
         }
-        return col;
+        return main_col;
     }
-    @NonNull
-    @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        if(convertView==null){
-            convertView= LayoutInflater.from(context).inflate(R.layout.list_item,null);
-            TextView title=(TextView) convertView.findViewById(R.id.item_title);
-            TextView detail=(TextView) convertView.findViewById(R.id.item_detail);
-            TextView date=(TextView) convertView.findViewById(R.id.item_date);
-            ImageView clock=(ImageView) convertView.findViewById(R.id.alarm_notifier);
-            OneEntryViewHolder OneEntryHolder=new OneEntryViewHolder(title,detail,date,clock);
-            convertView.setTag(OneEntryHolder);
+    public int getBaseColor(int position){
+        int base_col;
+        if(mReminder.get(position).color==1)
+        {
+            base_col=Color.parseColor(red_base);
         }
-        OneEntry entry=arrayList.get(position);
-        OneEntryViewHolder OneEntryHolder=(OneEntryViewHolder)  convertView.getTag();
-        OneEntryHolder.title.setText(entry.title);
-        OneEntryHolder.detail.setText(entry.detail);
-        OneEntryHolder.date.setText(entry.date);
-        if(!arrayList.get(position).time.equals("")){
-            OneEntryHolder.clock.setImageResource(android.R.drawable.ic_lock_idle_alarm);
+        else if(mReminder.get(position).color==2)
+        {
+            base_col=Color.parseColor(green_base);
         }
-        else{
-            OneEntryHolder.clock.setImageResource(0);
+        else if(mReminder.get(position).color==3)
+        {
+            base_col=Color.parseColor(blue_base);
         }
-        int col=getColor(position);
-        convertView.setBackgroundColor(col);
-
-        return convertView;
+        else
+        {
+            base_col=Color.parseColor(yellow_base);
+        }
+        return base_col;
     }
 }
 

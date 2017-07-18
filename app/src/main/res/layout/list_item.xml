@@ -30,6 +30,7 @@
 
         <LinearLayout
         android:layout_width="match_parent"
+            android:id="@+id/list_item_viewer"
         android:layout_height="wrap_content"
         android:layout_weight="30"
         android:orientation="vertical">
@@ -98,7 +99,7 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="1dp"
         android:background="@android:color/background_dark"
         app:srcCompat="?attr/actionBarDivider" />
 </LinearLayout>
